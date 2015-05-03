@@ -1,0 +1,63 @@
+
+@import "flex.less";
+@import "colorim.less";
+
+body {
+    font-family: Candara, Calibri, Segoe, Segoe UI, Optima, Arial, sans-serif;
+}
+
+.appbox {
+    position: absolute;
+    .flex-display();
+    .flex-direction(column);
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+.colorbox {
+    display: block;
+    position: relative;
+    .flex(1 1 auto);
+}
+
+.linebox {
+    color: hsla(93, 13.00%, 75.00%, 1);
+    background-color: hsla(213, 50.00%, 50.00%, 1);
+    .flex(0 1 auto);
+    min-height: 3ex;
+    font-size: 20px;
+    padding: .5ex;
+}
+
+.displaybox {
+    .flex-display();
+    .flex-direction(row);
+    justify-content: center;
+    text-align: center;
+}
+
+.helpbox {
+    .flex-display();
+    .flex-direction(row);
+}
+
+.helpbox > span {
+    border: dotted 1px;
+    border-color: hsla(93, 13.00%, 75.00%, 1);
+    border-radius: 5px;
+    .flex(0 1 auto);
+    display: span;
+    margin: 3px;
+    padding: 1px 10px;
+}
+
+.center {
+    top: 50%;
+    left: 50%;
+    width: 0px;
+    height: 0px;
+    position: relative;
+}
+

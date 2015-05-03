@@ -18,12 +18,13 @@ function gentree1() {
     echo "100644 blob $JS_BUNDLE"$'\t'"bundle.js"
     HTML_BUNDLE=$(git hash-object -w bundle.html)
     echo "100644 blob $HTML_BUNDLE"$'\t'"index.html"
+    CSS_BUNDLE=$(git hash-object -w <(lessc index.less))
+    echo "100644 blob $CSS_BUNDLE"$'\t'"index.css"
 }
 
 OVERLAY=$(gentree1 | git mktree)
 git read-tree --empty
 git read-tree --prefix=/ "$OVERLAY"
-git add index.css
 TREE=$(git write-tree --missing-ok)
 PARENT=$(git rev-parse refs/heads/master)
 COMMIT=$(git commit-tree -p "$PARENT" "$TREE" < <(echo "Create bundles"))

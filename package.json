@@ -4,19 +4,20 @@
   "description": "Guten tag, <colorim>!",
   "main": "colorim.html",
   "dependencies": {
-    "koerper": "^1.0.5",
     "gutentag": "^1.0.4",
-    "mr": "^2.0.7",
-    "pop-observe": "^2.0.2",
+    "koerper": "^1.0.5",
     "less": "^2.5.0",
-    "ndim": "^0.0.2"
+    "mr": "^2.0.7",
+    "ndim": "^0.0.2",
+    "pop-observe": "^2.0.2"
   },
   "devDependencies": {},
   "translators": {
     "html": "gutentag/translate-html"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "lessc index.less index.css"
   },
   "repository": {
     "type": "git",
