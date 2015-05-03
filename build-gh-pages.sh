@@ -23,7 +23,7 @@ function gentree1() {
 OVERLAY=$(gentree1 | git mktree)
 git read-tree --empty
 git read-tree --prefix=/ "$OVERLAY"
-git add list.css
+git add index.css
 TREE=$(git write-tree --missing-ok)
 PARENT=$(git rev-parse refs/heads/master)
 COMMIT=$(git commit-tree -p "$PARENT" "$TREE" < <(echo "Create bundles"))
