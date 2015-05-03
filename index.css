@@ -66,6 +66,9 @@ body {
   -ms-flex: 1 1 auto;
   flex: 1 1 auto;
 }
+.linebox a {
+  color: #bec8b7;
+}
 .linebox {
   color: #bec8b7;
   background-color: #4079bf;
