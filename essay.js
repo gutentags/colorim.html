@@ -18,6 +18,7 @@ Essay.prototype.add = function (child, id, scope) {
         this.handleValuePropertyChange(scope.components.colorField.value);
         this.sheet = scope.components.style.actualNode.sheet;
         this.sheeted = false;
+        this.handleValuePropertyChange(scope.components.colorField.value);
     }
 };
 

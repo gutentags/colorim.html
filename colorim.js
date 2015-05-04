@@ -88,7 +88,6 @@ ColorField.prototype.add = function add(component, id, scope) {
         this.update();
 
     } else if (id === "spectrum:iteration") {
-        console.log(component.value.toStyle());
         components.swatch.actualNode.style.backgroundColor = component.value.toStyle();
         components.swatch.actualNode.style.left = (component.value.index * 60) + 'px';
     }
@@ -140,9 +139,6 @@ ColorField.prototype.handleEvent = function handleEvent(event) {
 ColorField.prototype.update = function update() {
     if (this.updating) {
         return;
-    }
-    if (this.value) {
-    console.log(this.value.toStyle());
     }
     this.updating = true;
     var components = this.scope.components;
