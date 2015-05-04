@@ -4,6 +4,11 @@
 
 body {
     font-family: Candara, Calibri, Segoe, Segoe UI, Optima, Arial, sans-serif;
+    transition: color 500ms, background-color 1000ms;
+}
+
+a {
+    transition: color 500ms;
 }
 
 .appbox {
@@ -22,13 +27,7 @@ body {
     .flex(1 1 auto);
 }
 
-.linebox a {
-    color: hsla(93, 13.00%, 75.00%, 1);
-}
-
 .linebox {
-    color: hsla(93, 13.00%, 75.00%, 1);
-    background-color: hsla(213, 50.00%, 50.00%, 1);
     .flex(0 1 auto);
     min-height: 3ex;
     font-size: 20px;
@@ -49,7 +48,6 @@ body {
 
 .helpbox > span {
     border: dotted 1px;
-    border-color: hsla(93, 13.00%, 75.00%, 1);
     border-radius: 5px;
     .flex(0 1 auto);
     display: span;

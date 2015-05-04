@@ -2,7 +2,7 @@
   position: absolute;
   height: 100%;
   width: 100%;
-  transition: background-color 1000ms;
+  overflow: hidden;
 }
 .hueCenter {
   position: absolute;
@@ -41,6 +41,10 @@
 }
 body {
   font-family: Candara, Calibri, Segoe, Segoe UI, Optima, Arial, sans-serif;
+  transition: color 500ms, background-color 1000ms;
+}
+a {
+  transition: color 500ms;
 }
 .appbox {
   position: absolute;
@@ -67,11 +71,11 @@ body {
   flex: 1 1 auto;
 }
 .linebox a {
-  color: #bec8b7;
+  /*color: hsla(93, 13.00%, 75.00%, 1); */
 }
 .linebox {
-  color: #bec8b7;
-  background-color: #4079bf;
+  /*color: hsla(93, 13.00%, 75.00%, 1); */
+  /*background-color: hsla(213, 50.00%, 50.00%, 1);*/
   -webkit-flex: 0 1 auto;
   -moz-flex: 0 1 auto;
   -ms-flex: 0 1 auto;
@@ -106,7 +110,7 @@ body {
 }
 .helpbox > span {
   border: dotted 1px;
-  border-color: #bec8b7;
+  /*border-color: hsla(93, 13.00%, 75.00%, 1);*/
   border-radius: 5px;
   -webkit-flex: 0 1 auto;
   -moz-flex: 0 1 auto;

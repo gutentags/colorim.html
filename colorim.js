@@ -152,7 +152,6 @@ ColorField.prototype.update = function update() {
     components.hueSpectrum.update(this.value);
     components.saturationSpectrum.update(this.value);
     components.lightnessSpectrum.update(this.value);
-    components.container.actualNode.style.backgroundColor = this.value.toStyle();
     this.updating = false;
 };
 

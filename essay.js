@@ -1,9 +1,11 @@
 "use strict";
 
 var O = require("pop-observe");
+var Swatch = require("./swatch");
 
 module.exports = Essay;
 function Essay() {
+    this.fore = new Swatch();
 }
 
 Essay.prototype.add = function (child, id, scope) {
@@ -14,6 +16,8 @@ Essay.prototype.add = function (child, id, scope) {
         scope.components.colorField.focus();
         this.observer = O.observePropertyChange(scope.components.colorField, "value", this);
         this.handleValuePropertyChange(scope.components.colorField.value);
+        this.sheet = scope.components.style.actualNode.sheet;
+        this.sheeted = false;
     }
 };
 
@@ -28,5 +32,32 @@ Essay.prototype.handleEvent = function (event) {
 };
 
 Essay.prototype.handleValuePropertyChange = function (swatch) {
-    this.scope.components.colorStyle.value = swatch.toStyle();
+    this.fore.assign(swatch);
+    this.fore.lightness = (1 - Math.round(swatch.lightness));
+
+    var chosenColorStyle = swatch.toStyle();
+    var foreColorStyle = this.fore.toStyle();
+    this.scope.components.colorStyle.value = chosenColorStyle;
+
+
+    if (this.sheet) {
+        if (this.sheeted) {
+            this.sheet.deleteRule(1);
+            this.sheet.deleteRule(0);
+        }
+        this.sheeted = true;
+        this.sheet.insertRule(
+            "body {" +
+                "background-color: " + chosenColorStyle + "; " +
+                "color: " + foreColorStyle + "; " +
+            "}",
+            0
+        );
+        this.sheet.insertRule(
+            "a {" +
+                "color: " + foreColorStyle + "; " +
+            "}",
+            1
+        );
+    }
 };
