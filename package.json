@@ -4,12 +4,12 @@
   "description": "Guten tag, <colorim>!",
   "main": "colorim.html",
   "dependencies": {
-    "gutentag": "^1.0.4",
+    "gutentag": "^2.1.1",
     "koerper": "^1.0.5",
     "less": "^2.5.0",
-    "mr": "^2.0.7",
     "ndim": "^0.0.2",
-    "pop-observe": "^2.0.2"
+    "pop-observe": "^2.0.2",
+    "system": "^1.0.4"
   },
   "devDependencies": {},
   "translators": {

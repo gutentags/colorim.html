@@ -1,6 +1,6 @@
 "use strict";
 
-var Document = require("koerper");
+var Document = require("gutentag/document");
 var Scope = require("gutentag/scope");
 var Essay = require("./essay.html");
 

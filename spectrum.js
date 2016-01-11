@@ -29,18 +29,18 @@ Object.defineProperty(Spectrum.prototype, "active", {
     set: function (active) {
         this._active = active;
         if (active) {
-            this.scope.components.reticle.actualNode.classList.add("active");
+            this.scope.components.reticle.classList.add("active");
         } else {
-            this.scope.components.reticle.actualNode.classList.remove("active");
+            this.scope.components.reticle.classList.remove("active");
         }
     }
 });
 
-Spectrum.prototype.add = function add(component, id, scope) {
+Spectrum.prototype.hookup = function add(id, component, scope) {
     var components = scope.components;
     if (id === "spectrum:iteration") {
-        components.swatch.actualNode.style.backgroundColor = component.value.toStyle();
-        components.swatch.actualNode.style.left = (component.value.index * 60) + 'px';
+        components.swatch.style.backgroundColor = component.value.toStyle();
+        components.swatch.style.left = (component.value.index * 60) + 'px';
     } else if (id === "this") {
         components.spectrum.value = this.swatches;
     }
@@ -124,7 +124,7 @@ Spectrum.prototype.update = function update(swatchValue) {
 Spectrum.prototype.updateReticle = function updateReticle(swatchValue) {
     if (swatchValue) {
         this.reticleColor.lightness = (1 - Math.round(swatchValue.lightness));
-        this.scope.components.reticle.actualNode.style.borderColor = this.reticleColor.toStyle();
+        this.scope.components.reticle.style.borderColor = this.reticleColor.toStyle();
     }
 };
 

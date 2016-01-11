@@ -46,7 +46,7 @@ Object.defineProperty(ColorField.prototype, "activeSpectrumIndex", {
     }
 });
 
-ColorField.prototype.add = function add(component, id, scope) {
+ColorField.prototype.hookup = function add(id, component, scope) {
     var self = this;
     var components = scope.components;
     if (id === "this") {

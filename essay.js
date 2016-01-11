@@ -8,7 +8,7 @@ function Essay() {
     this.fore = new Swatch();
 }
 
-Essay.prototype.add = function (child, id, scope) {
+Essay.prototype.hookup = function (id, child, scope) {
     if (id === "this") {
         window.addEventListener("keypress", this);
         window.addEventListener("keydown", this);
@@ -16,7 +16,7 @@ Essay.prototype.add = function (child, id, scope) {
         scope.components.colorField.focus();
         this.observer = O.observePropertyChange(scope.components.colorField, "value", this);
         this.handleValuePropertyChange(scope.components.colorField.value);
-        this.sheet = scope.components.style.actualNode.sheet;
+        this.sheet = scope.components.style.sheet;
         this.sheeted = false;
         this.handleValuePropertyChange(scope.components.colorField.value);
     }
