@@ -14,32 +14,27 @@ Essay.prototype.hookup = function (id, child, scope) {
         window.addEventListener("keydown", this);
         window.addEventListener("keyup", this);
         scope.components.colorField.focus();
-        this.observer = O.observePropertyChange(scope.components.colorField, "value", this);
-        this.handleValuePropertyChange(scope.components.colorField.value);
+        scope.components.colorField.delegate = this;
         this.sheet = scope.components.style.sheet;
         this.sheeted = false;
-        this.handleValuePropertyChange(scope.components.colorField.value);
+        this.handleColorChange(scope.components.colorField.value);
     }
 };
 
 Essay.prototype.destroy = function () {
-    if (this.observer) {
-        this.observer.cancel();
-    }
 };
 
 Essay.prototype.handleEvent = function (event) {
     this.scope.components.colorField.handleEvent(event);
 };
 
-Essay.prototype.handleValuePropertyChange = function (swatch) {
+Essay.prototype.handleColorChange = function (swatch) {
     this.fore.assign(swatch);
     this.fore.lightness = (1 - Math.round(swatch.lightness));
 
     var chosenColorStyle = swatch.toStyle();
     var foreColorStyle = this.fore.toStyle();
     this.scope.components.colorStyle.value = chosenColorStyle;
-
 
     if (this.sheet) {
         if (this.sheeted) {

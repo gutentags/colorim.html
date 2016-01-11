@@ -4,13 +4,19 @@ var O = require("pop-observe");
 var Swatch = require("./swatch");
 
 module.exports = ColorField;
-function ColorField(body, caller) {
+function ColorField(body, scope) {
+    this.spectra = null;
+    this.animator = scope.animator.add(this);
+    // control
     this._activeSpectrumIndex = null;
     this.activeSpectrum = null;
-    this.spectra = null;
+    this.cursorColor = new Swatch(0, 1, 1); // black
+    this.delegate = null;
+    // model
     this.hue = 0;
-    this.saturation = 255;
-    this.lightness = 255/2;
+    this.saturation = 1;
+    this.lightness = .5;
+    this.value = new Swatch(this.hue, this.saturation, this.lightness);
 }
 
 ColorField.prototype.focus = function () {
@@ -19,6 +25,10 @@ ColorField.prototype.focus = function () {
 
 ColorField.prototype.blur = function () {
     this.activeSpectrumIndex = null;
+};
+
+ColorField.prototype.destroy = function destroy() {
+    this.animator.destroy();
 };
 
 Object.defineProperty(ColorField.prototype, "activeSpectrumIndex", {
@@ -59,35 +69,24 @@ ColorField.prototype.hookup = function add(id, component, scope) {
         components.hueSpectrum.createSwatch = function (value, index) {
             return new Swatch(value, self.saturation, self.lightness, index);
         };
-        components.hueSpectrum.assign = function (swatch) {
-            self.value = swatch;
-            self.hue = swatch.hue;
-            self.update();
-        };
-
-        components.saturationSpectrum.index = 4;
         components.saturationSpectrum.createSwatch = function (value, index) {
             return new Swatch(self.hue, value, self.lightness, index);
         };
-        components.saturationSpectrum.assign = function (swatch) {
-            self.value = swatch;
-            self.saturation = swatch.saturation;
-            self.update();
-        };
-
-        components.lightnessSpectrum.index = 2;
         components.lightnessSpectrum.createSwatch = function (value, index) {
             return new Swatch(self.hue, self.saturation, value, index);
         };
-        components.lightnessSpectrum.assign = function (swatch) {
-            self.value = swatch;
-            self.lightness = swatch.lightness;
-            self.update();
-        };
 
-        this.update();
+        components.hueSpectrum.colorField = this;
+        components.saturationSpectrum.colorField = this;
+        components.lightnessSpectrum.colorField = this;
+
+        components.saturationSpectrum.index = 4;
+        components.lightnessSpectrum.index = 2;
+
+        this.animator.requestDraw();
 
     } else if (id === "spectrum:iteration") {
+        // TODO get rid of this evidently dead code
         components.swatch.actualNode.style.backgroundColor = component.value.toStyle();
         components.swatch.actualNode.style.left = (component.value.index * 60) + 'px';
     }
@@ -136,21 +135,6 @@ ColorField.prototype.handleEvent = function handleEvent(event) {
     }
 };
 
-ColorField.prototype.update = function update() {
-    if (this.updating) {
-        return;
-    }
-    this.updating = true;
-    var components = this.scope.components;
-    components.hueSpectrum.update(this.value);
-    components.saturationSpectrum.update(this.value);
-    components.lightnessSpectrum.update(this.value);
-    components.hueSpectrum.update(this.value);
-    components.saturationSpectrum.update(this.value);
-    components.lightnessSpectrum.update(this.value);
-    this.updating = false;
-};
-
 ColorField.prototype.handleUpCommand = function handleUpCommand() {
     var index = null;
     if (this._activeSpectrumIndex === null) {
@@ -175,3 +159,19 @@ ColorField.prototype.handleDownCommand = function handleDownCommand() {
     this.activeSpectrumIndex = index;
 };
 
+ColorField.prototype.update = function update(value) {
+    this.hue = value.hue;
+    this.value = value;
+    this.saturation = value.saturation;
+    this.lightness = value.lightness;
+    if (this.delegate) {
+        this.delegate.handleColorChange(this.value, this.id);
+    }
+    this.animator.requestDraw();
+};
+
+ColorField.prototype.draw = function draw() {
+    this.spectra[0].draw();
+    this.spectra[1].draw();
+    this.spectra[2].draw();
+};

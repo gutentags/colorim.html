@@ -4,6 +4,7 @@
   "description": "Guten tag, <colorim>!",
   "main": "colorim.html",
   "dependencies": {
+    "blick": "^1.1.0",
     "gutentag": "^2.1.1",
     "koerper": "^1.0.5",
     "less": "^2.5.0",

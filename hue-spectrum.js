@@ -5,12 +5,11 @@ var Swatch = require("./swatch");
 var Spectrum = require("./spectrum");
 
 module.exports = HueSpectrum;
-function HueSpectrum(body, caller) {
+function HueSpectrum(body, scope) {
     this.resolution = 0;
     this.divisions = 3;
     this.index = 1;
     this.swatches = [];
-    this.reticleColor = new Swatch(0, 1, 0);
     O.makeArrayObservable(this.swatches);
     this._active = false;
 }
@@ -47,8 +46,7 @@ HueSpectrum.prototype.handleRightCommand = function handleRightCommand() {
     this.update();
 };
 
-HueSpectrum.prototype.update = function update(swatchValue) {
-    this.value = this.breadth / this.divisions * this.index;
+HueSpectrum.prototype.update = function update() {
     this.swatches.clear();
     var offset = Math.floor(this.divisions / 2);
     var jndex = this.index - offset;
@@ -57,10 +55,18 @@ HueSpectrum.prototype.update = function update(swatchValue) {
         this.swatches.push(this.createSwatch(value, index - offset));
     }
     this.value = this.swatches[offset];
-    if (this.value == undefined) {
-        throw new Error('This should not be ' + offset);
+    this.colorField.update(this.value);
+};
+
+HueSpectrum.prototype.draw = function draw() {
+    this.swatches.clear();
+    var offset = Math.floor(this.divisions / 2);
+    var jndex = this.index - offset;
+    for (var index = 0; index < this.divisions; index++, jndex++) {
+        var value = (this.breadth / this.divisions * jndex) % this.breadth;
+        this.swatches.push(this.createSwatch(value, index - offset));
     }
-    this.assign(this.value);
-    this.updateReticle(swatchValue);
+    // TODO assert this.swatches[offset] equals this.value
+    this.scope.components.reticle.style.borderColor = this.colorField.cursorColor.toStyle();
 };
 

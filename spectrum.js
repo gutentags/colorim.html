@@ -4,14 +4,15 @@ var O = require("pop-observe");
 var Swatch = require("./swatch");
 
 module.exports = Spectrum;
-function Spectrum(body, caller) {
+function Spectrum(body, scope) {
     this.resolution = 0;
     this.divisions = 5;
     this.index = 0;
     this.swatches = [];
-    this.reticleColor = new Swatch(0, 1, 0);
+    this.cursorColor = null;
     O.makeArrayObservable(this.swatches);
     this._active = false;
+    this.animator = null;
 }
 
 Spectrum.prototype.resolutions = [
@@ -105,26 +106,21 @@ Spectrum.prototype.handleRightCommand = function handleRightCommand() {
     this.update();
 };
 
-Spectrum.prototype.update = function update(swatchValue) {
-    this.value = this.breadth / (this.divisions - 1) * this.index;
+Spectrum.prototype.update = function update() {
+    var offset = Math.floor(this.index);
+    var value = (this.breadth / (this.divisions - 1) * offset);
+    this.value = this.createSwatch(value, offset);
+    this.colorField.update(this.value);
+};
+
+Spectrum.prototype.draw = function draw() {
     this.swatches.clear();
     var offset = Math.floor(this.index);
     for (var index = 0; index < this.divisions; index++) {
         var value = (this.breadth / (this.divisions - 1) * index);
         this.swatches.push(this.createSwatch(value, index - offset));
     }
-    this.value = this.swatches[offset];
-    if (this.value == undefined) {
-        throw new Error('This should not be ' + offset);
-    }
-    this.assign(this.value);
-    this.updateReticle(swatchValue);
-};
-
-Spectrum.prototype.updateReticle = function updateReticle(swatchValue) {
-    if (swatchValue) {
-        this.reticleColor.lightness = (1 - Math.round(swatchValue.lightness));
-        this.scope.components.reticle.style.borderColor = this.reticleColor.toStyle();
-    }
+    // TODO assert this.swatches[offset] equals this.value
+    this.scope.components.reticle.style.borderColor = this.colorField.cursorColor.toStyle();
 };
 

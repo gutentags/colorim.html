@@ -21,8 +21,8 @@
 }
 .reticle.active {
   position: absolute;
-  top: -31px;
-  left: -31px;
+  top: -30px;
+  left: -30px;
   height: 60px;
   width: 60px;
   border-radius: 30px;
@@ -70,12 +70,7 @@ a {
   -ms-flex: 1 1 auto;
   flex: 1 1 auto;
 }
-.linebox a {
-  /*color: hsla(93, 13.00%, 75.00%, 1); */
-}
 .linebox {
-  /*color: hsla(93, 13.00%, 75.00%, 1); */
-  /*background-color: hsla(213, 50.00%, 50.00%, 1);*/
   -webkit-flex: 0 1 auto;
   -moz-flex: 0 1 auto;
   -ms-flex: 0 1 auto;
@@ -110,7 +105,6 @@ a {
 }
 .helpbox > span {
   border: dotted 1px;
-  /*border-color: hsla(93, 13.00%, 75.00%, 1);*/
   border-radius: 5px;
   -webkit-flex: 0 1 auto;
   -moz-flex: 0 1 auto;
