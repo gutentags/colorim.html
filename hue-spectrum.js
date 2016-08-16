@@ -28,6 +28,11 @@ HueSpectrum.prototype.resolutions = [
 
 HueSpectrum.prototype.breadth = 360;
 
+HueSpectrum.prototype.set = function set(value) {
+    this.index = value * this.divisions / 360;
+    this.update();
+};
+
 HueSpectrum.prototype.setResolution = function (resolution) {
     var divisions = this.resolutions[resolution];
     this.index = this.index * divisions / this.divisions;

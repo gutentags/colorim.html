@@ -7,7 +7,8 @@ export GIT_DIR="$HERE/.git"
 export GIT_INDEX_FILE=$(mktemp "$GIT_DIR/TEMP.XXXXXX")
 
 function gentree() {
-    echo "100644 blob $(git hash-object -w <(mrs index.js))"$'\t'"bundle.js"
+    echo "100644 blob $(git hash-object -w CNAME)"$'\t'"CNAME"
+    echo "100644 blob $(git hash-object -w <(bundle index.js))"$'\t'"bundle.js"
     echo "100644 blob $(git hash-object -w bundle.html)"$'\t'"index.html"
     echo "100644 blob $(git hash-object -w <(lessc index.less))"$'\t'"index.css"
 }

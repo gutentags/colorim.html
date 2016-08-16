@@ -39,7 +39,8 @@
   height: 50px;
   border-radius: 50px;
 }
-body {
+body,
+input {
   font-family: Candara, Calibri, Segoe, Segoe UI, Optima, Arial, sans-serif;
   transition: color 500ms, background-color 1000ms;
 }
@@ -120,4 +121,24 @@ a {
   width: 0px;
   height: 0px;
   position: relative;
+}
+.colorimPastebin {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 1;
+  width: 1;
+}
+.colorimField {
+  width: 100%;
+  position: absolute;
+  font-size: 100%;
+  left: 0;
+  right: 0;
+  box-sizing: border-box;
+  text-align: center;
+  background: transparent;
+  border: none;
+  padding: 4px;
+  outline: none;
 }

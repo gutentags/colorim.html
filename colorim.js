@@ -21,6 +21,9 @@ function ColorField(body, scope) {
 
 ColorField.prototype.focus = function () {
     this.activeSpectrumIndex = 0;
+    if (this.delegate) {
+        this.delegate.handleHashChange(this.hash, this.value, this.id);
+    }
 };
 
 ColorField.prototype.blur = function () {
@@ -53,6 +56,54 @@ Object.defineProperty(ColorField.prototype, "activeSpectrumIndex", {
         this._activeSpectrumIndex = index;
         this.activeSpectrum = this.spectra[index];
         this.activeSpectrum.active = true;
+        if (this.delegate) {
+            this.delegate.handleHashChange(this.hash, this.value, this.id);
+        }
+    }
+});
+
+Object.defineProperty(ColorField.prototype, "hash", {
+    get: function get() {
+        return '#' +
+            this._activeSpectrumIndex + ',' +
+            this.spectra[0].resolution + ',' +
+            this.spectra[0].divisions + ',' +
+            this.spectra[0].index + ',' +
+            this.spectra[1].resolution + ',' +
+            this.spectra[1].divisions + ',' +
+            this.spectra[1].index + ',' +
+            this.spectra[2].resolution + ',' +
+            this.spectra[2].divisions + ',' +
+            this.spectra[2].index;
+    },
+    set: function set(hash) {
+        if (!hash) {
+            return;
+        }
+        var parts = hash.slice(1).split(',');
+        if (parts.length !== 10) {
+            return;
+        }
+        for (var i = 0; i < parts.length; i++) {
+            parts[i] = +parts[i];
+            if (parts[i] !== parts[i]) {
+                return;
+            }
+        }
+        var i = 0;
+        this.activeSpectrumIndex = parts[i++];
+        this.spectra[0].resolution = parts[i++];
+        this.spectra[0].divisions = parts[i++];
+        this.spectra[0].index = parts[i++];
+        this.spectra[1].resolution = parts[i++];
+        this.spectra[1].divisions = parts[i++];
+        this.spectra[1].index = parts[i++];
+        this.spectra[2].resolution = parts[i++];
+        this.spectra[2].divisions = parts[i++];
+        this.spectra[2].index = parts[i++];
+        this.spectra[0].update();
+        this.spectra[1].update();
+        this.spectra[2].update();
     }
 });
 
@@ -83,6 +134,8 @@ ColorField.prototype.hookup = function add(id, component, scope) {
         components.saturationSpectrum.index = 4;
         components.lightnessSpectrum.index = 2;
 
+        components.hueSpectrum.update();
+
         this.animator.requestDraw();
 
     } else if (id === "spectrum:iteration") {
@@ -92,9 +145,7 @@ ColorField.prototype.hookup = function add(id, component, scope) {
     }
 };
 
-ColorField.prototype.handleEvent = function handleEvent(event) {
-    var key = event.key || String.fromCharCode(event.charCode);
-    var keyCode = event.keyCode || event.charCode;
+ColorField.prototype.handleEvent = function handleEvent(event, key, keyCode) {
     if (this._activeSpectrumIndex !== null) {
         this.activeSpectrum.handleEvent(event);
     }
@@ -166,6 +217,7 @@ ColorField.prototype.update = function update(value) {
     this.lightness = value.lightness;
     if (this.delegate) {
         this.delegate.handleColorChange(this.value, this.id);
+        this.delegate.handleHashChange(this.hash, this.value, this.id);
     }
     this.animator.requestDraw();
 };

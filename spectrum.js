@@ -23,6 +23,19 @@ Spectrum.prototype.resolutions = [
 
 Spectrum.prototype.breadth = 1;
 
+Spectrum.prototype.set = function set(value) {
+    for (var resolution = 0; resolution < this.resolutions.length - 1; resolution++) {
+        if (value % this.resolution[resolution] === 0) {
+            break;
+        }
+    }
+    var divisions = this.resolutions[resolution];
+    this.divisions = divisions;
+    this.resolution = resolution;
+    this.index = Math.floor(value / 100 * this.divisions);
+    this.update();
+};
+
 Object.defineProperty(Spectrum.prototype, "active", {
     get: function () {
         return this._active;
