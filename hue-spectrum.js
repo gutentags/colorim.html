@@ -28,9 +28,9 @@ HueSpectrum.prototype.resolutions = [
 
 HueSpectrum.prototype.breadth = 360;
 
-HueSpectrum.prototype.set = function set(value) {
+HueSpectrum.prototype.set = function set(value, user) {
     this.index = value * this.divisions / 360;
-    this.update();
+    this.update(user);
 };
 
 HueSpectrum.prototype.setResolution = function (resolution) {
@@ -51,7 +51,7 @@ HueSpectrum.prototype.handleRightCommand = function handleRightCommand() {
     this.update();
 };
 
-HueSpectrum.prototype.update = function update() {
+HueSpectrum.prototype.update = function update(user) {
     this.swatches.clear();
     var offset = Math.floor(this.divisions / 2);
     var jndex = this.index - offset;
@@ -60,7 +60,7 @@ HueSpectrum.prototype.update = function update() {
         this.swatches.push(this.createSwatch(value, index - offset));
     }
     this.value = this.swatches[offset];
-    this.colorField.update(this.value);
+    this.colorField.set(this.value, user);
 };
 
 HueSpectrum.prototype.draw = function draw() {
@@ -72,6 +72,6 @@ HueSpectrum.prototype.draw = function draw() {
         this.swatches.push(this.createSwatch(value, index - offset));
     }
     // TODO assert this.swatches[offset] equals this.value
-    this.scope.components.reticle.style.borderColor = this.colorField.cursorColor.toStyle();
+    this.scope.components.reticle.style.borderColor = this.colorField.contrastColor.toHSLString();
 };
 

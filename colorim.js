@@ -1,5 +1,6 @@
 "use strict";
 
+var Irid = require("irid");
 var O = require("pop-observe");
 var Swatch = require("./swatch");
 
@@ -10,7 +11,7 @@ function ColorField(body, scope) {
     // control
     this._activeSpectrumIndex = null;
     this.activeSpectrum = null;
-    this.cursorColor = new Swatch(0, 1, 1); // black
+    this.cursorColor = null;
     this.delegate = null;
     // model
     this.hue = 0;
@@ -22,7 +23,7 @@ function ColorField(body, scope) {
 ColorField.prototype.focus = function () {
     this.activeSpectrumIndex = 0;
     if (this.delegate) {
-        this.delegate.handleHashChange(this.hash, this.value, this.id);
+        this.update();
     }
 };
 
@@ -57,7 +58,7 @@ Object.defineProperty(ColorField.prototype, "activeSpectrumIndex", {
         this.activeSpectrum = this.spectra[index];
         this.activeSpectrum.active = true;
         if (this.delegate) {
-            this.delegate.handleHashChange(this.hash, this.value, this.id);
+            this.update();
         }
     }
 });
@@ -210,14 +211,23 @@ ColorField.prototype.handleDownCommand = function handleDownCommand() {
     this.activeSpectrumIndex = index;
 };
 
-ColorField.prototype.update = function update(value) {
+ColorField.prototype.set = function set(value, user) {
     this.hue = value.hue;
     this.value = value;
     this.saturation = value.saturation;
     this.lightness = value.lightness;
-    if (this.delegate) {
-        this.delegate.handleColorChange(this.value, this.id);
-        this.delegate.handleHashChange(this.hash, this.value, this.id);
+    this.update(user);
+};
+
+ColorField.prototype.update = function update(user) {
+    this.color = new Irid({h: this.hue / 360, s: this.saturation, l: this.lightness});
+    this.color._makeRGB(); // XXX workaround TODO fix irid
+    this.contrastColor = this.color.contrast();
+    if (this.delegate && this.delegate.handleColorChange) {
+        this.delegate.handleColorChange(this.color, this.contrastColor, this.id, user);
+    }
+    if (this.delegate && this.delegate.handleHashChange) {
+        this.delegate.handleHashChange(this.hash, this.color, this.contrastColor, this.id, user);
     }
     this.animator.requestDraw();
 };

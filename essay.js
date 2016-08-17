@@ -2,10 +2,12 @@
 
 var O = require("pop-observe");
 var Swatch = require("./swatch");
+var Irid = require("irid");
 
 module.exports = Essay;
 function Essay() {
-    this.fore = new Swatch();
+    this.fore = null;
+    this.back = null;
     this.eventState = new EventState(this);
 }
 
@@ -14,6 +16,12 @@ Essay.prototype.hookup = function (id, child, scope) {
         this.sheet = scope.components.style.sheet;
         this.colorText = scope.components.color;
         this.colorField = scope.components.colorField;
+
+        var colorHandler = new ColorHandler(this);
+        this.colorText.addEventListener('keypress', colorHandler);
+        this.colorText.addEventListener('keydown', colorHandler);
+        this.colorText.addEventListener('keyup', colorHandler);
+
         window.addEventListener("keypress", this);
         window.addEventListener("keydown", this);
         window.addEventListener("keyup", this);
@@ -23,7 +31,7 @@ Essay.prototype.hookup = function (id, child, scope) {
 
         this.colorField.hash = window.location.hash;
 
-        this.handleColorChange(this.colorField.value);
+        this.colorField.update(false);
     }
 };
 
@@ -36,35 +44,21 @@ Essay.prototype.handleEvent = function (event) {
     this.eventState = this.eventState.handleEvent(event, key, keyCode);
 };
 
-Essay.prototype.handleHashChange = function handleHashChange(hash, swatch) {
+Essay.prototype.handleHashChange = function handleHashChange(hash, color, contrastColor, id, user) {
     window.history.replaceState(
-        swatch,
-        swatch.toStyle(),
-        this.colorField.hash
+        color,
+        color.toHSLString(),
+        hash
     );
 };
 
-Essay.prototype.paste = function paste(color) {
-    var match = /(\d+),\s*(\d+\.\d+)%,\s*(\d+\.\d+)%/.exec(color);
-    if (!match) {
-        return;
+Essay.prototype.handleColorChange = function (color, contrastColor, id, user) {
+    var colorStyle = color.toHSLString();
+    var constrastColorStyle = contrastColor.toHSLString();
+
+    if (!user) {
+        this.colorText.value = colorStyle;
     }
-    var hue = +match[1];
-    var saturation = +match[2];
-    var lightness = +match[3];
-    this.colorField.spectra[0].set(hue);
-    this.colorField.spectra[1].set(saturation);
-    this.colorField.spectra[2].set(lightness);
-};
-
-Essay.prototype.handleColorChange = function (swatch) {
-    this.fore.assign(swatch);
-    this.fore.lightness = (1 - Math.round(swatch.lightness));
-
-    var chosenColorStyle = swatch.toStyle();
-    var foreColorStyle = this.fore.toStyle();
-
-    this.colorText.value = swatch.toStyle();
 
     if (this.sheet) {
         if (this.sheeted) {
@@ -74,18 +68,45 @@ Essay.prototype.handleColorChange = function (swatch) {
         this.sheeted = true;
         this.sheet.insertRule(
             "body, input {" +
-                "background-color: " + chosenColorStyle + "; " +
-                "color: " + foreColorStyle + "; " +
+                "background-color: " + colorStyle + "; " +
+                "color: " + constrastColorStyle + "; " +
             "}",
             0
         );
         this.sheet.insertRule(
             "a {" +
-                "color: " + foreColorStyle + "; " +
+                "color: " + constrastColorStyle + "; " +
             "}",
             1
         );
     }
+};
+
+Essay.prototype.paste = function paste(color) {
+    var user = true;
+    if (!Irid.canInterpret(color)) {
+        return;
+    }
+    var irid = new Irid(color);
+    this.colorField.spectra[0].set(irid.hue() * 360, user);
+    this.colorField.spectra[1].set(irid.saturation() * 100, user);
+    this.colorField.spectra[2].set(irid.lightness() * 100, user);
+};
+
+function ColorHandler(essay) {
+    this.essay = essay;
+}
+
+ColorHandler.prototype.handleEvent = function handleEvent(event) {
+    var key = event.key || String.fromCharCode(event.charCode);
+    var keyCode = event.keyCode || event.charCode;
+    if (event.type === 'keyup') {
+        if (keyCode == 27) { // escape
+            this.essay.colorText.blur();
+        }
+    }
+    this.essay.paste(event.target.value);
+    event.stopPropagation();
 };
 
 function EventState(parent) {
@@ -93,9 +114,14 @@ function EventState(parent) {
 }
 
 EventState.prototype.handleEvent = function handleEvent(event, key, keyCode) {
-    if (event.type === "keydown") {
+    if (event.type === 'keydown') {
         if (key === 'Meta' || key === 'Control') {
             return new MetaKeyState(this, key, this.parent);
+        }
+    } else if (event.type === 'keypress') {
+        if (key === '/') {
+            this.parent.colorText.select();
+            event.preventDefault();
         }
     }
     this.parent.colorField.handleEvent(event, key, keyCode);

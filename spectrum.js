@@ -9,7 +9,6 @@ function Spectrum(body, scope) {
     this.divisions = 5;
     this.index = 0;
     this.swatches = [];
-    this.cursorColor = null;
     O.makeArrayObservable(this.swatches);
     this._active = false;
     this.animator = null;
@@ -23,7 +22,7 @@ Spectrum.prototype.resolutions = [
 
 Spectrum.prototype.breadth = 1;
 
-Spectrum.prototype.set = function set(value) {
+Spectrum.prototype.set = function set(value, user) {
     for (var resolution = 0; resolution < this.resolutions.length - 1; resolution++) {
         if (value % this.resolution[resolution] === 0) {
             break;
@@ -33,7 +32,7 @@ Spectrum.prototype.set = function set(value) {
     this.divisions = divisions;
     this.resolution = resolution;
     this.index = Math.floor(value / 100 * this.divisions);
-    this.update();
+    this.update(user);
 };
 
 Object.defineProperty(Spectrum.prototype, "active", {
@@ -87,43 +86,43 @@ Spectrum.prototype.handleEvent = function handleEvent(event) {
     }
 };
 
-Spectrum.prototype.handleShiftLeftCommand = function () {
+Spectrum.prototype.handleShiftLeftCommand = function handleShiftLeftCommand() {
     if (this.resolution <= 0) {
-        return
+        return;
     }
     this.setResolution(this.resolution - 1);
 };
 
-Spectrum.prototype.handleShiftRightCommand = function () {
+Spectrum.prototype.handleShiftRightCommand = function handleShiftRightCommand() {
     if (this.resolution >= this.resolutions.length - 1) {
         return;
     }
     this.setResolution(this.resolution + 1);
 };
 
-Spectrum.prototype.setResolution = function (resolution) {
+Spectrum.prototype.setResolution = function setResolution(resolution) {
     var divisions = this.resolutions[resolution];
     this.index = Math.round(this.index * (divisions - 1) / (this.divisions - 1));
     this.divisions = divisions;
     this.resolution = resolution;
-    this.update();
+    this.update(false);
 };
 
 Spectrum.prototype.handleLeftCommand = function handleLeftCommand() {
     this.index = Math.max(0, this.index - 1);
-    this.update();
+    this.update(false);
 };
 
 Spectrum.prototype.handleRightCommand = function handleRightCommand() {
     this.index = Math.min(this.index + 1, this.divisions - 1);
-    this.update();
+    this.update(false);
 };
 
-Spectrum.prototype.update = function update() {
+Spectrum.prototype.update = function update(user) {
     var offset = Math.floor(this.index);
     var value = (this.breadth / (this.divisions - 1) * offset);
     this.value = this.createSwatch(value, offset);
-    this.colorField.update(this.value);
+    this.colorField.set(this.value, user);
 };
 
 Spectrum.prototype.draw = function draw() {
@@ -134,6 +133,6 @@ Spectrum.prototype.draw = function draw() {
         this.swatches.push(this.createSwatch(value, index - offset));
     }
     // TODO assert this.swatches[offset] equals this.value
-    this.scope.components.reticle.style.borderColor = this.colorField.cursorColor.toStyle();
+    this.scope.components.reticle.style.borderColor = this.colorField.contrastColor.toHSLString();
 };
 
