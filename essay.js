@@ -29,7 +29,7 @@ Essay.prototype.hookup = function (id, child, scope) {
         this.colorField.delegate = this;
         this.sheeted = false;
 
-        this.colorField.hash = window.location.hash;
+        this.colorField.hash = window.location.hash || '#0,2,12,7,0,5,2,0,5,2';
 
         this.colorField.update(false);
     }
